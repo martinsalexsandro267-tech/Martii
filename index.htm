@@ -1,0 +1,63 @@
+index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Martii IA | Marketplace oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AelcmaMOSPIBXi18CQjyqKLZzXD8tgj3JfkvNyFvwRA6NZRv40c9kNk93DZ4UnxnnCLBZADzZ7sqqcoI&currency=BRL"></script>
+    <style>
+        body { background: #ffffff; font-family: sans-serif; }
+        .m-logo { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; background: linear-gradient(45deg, #a855f7, #3b82f6); }
+        .chat-box { height: 60vh; overflow-y: auto; padding: 20px; border-radius: 20px; background: #f9fafb; border: 1px solid #eee; }
+        .bubble-ia { background: #f3e8ff; color: #6b21a8; padding: 12px; border-radius: 15px 15px 15px 0; margin-bottom: 15px; border: 1px solid #e9d5ff; }
+        .bubble-user { background: #e5e7eb; color: #374151; padding: 12px; border-radius: 15px 15px 0 15px; margin-bottom: 15px; margin-left: auto; width: fit-content; }
+    </style>
+</head>
+<body class="p-4">
+
+    <header class="flex items-center gap-3 mb-6">
+        <div class="m-logo">M</div>
+        <div>
+            <h1 class="font-bold text-xl">Martii IA</h1>
+            <p class="text-[10px] text-purple-600 font-bold uppercase tracking-widest">Marketplace App</p>
+        </div>
+    </header>
+
+    <div class="chat-box" id="chat">
+        <div class="bubble-ia">Olá, sou a Martii IA! Busco ofertas reais no Magalu, Mercado Livre e Google. O que você quer comprar com lucro de 25% hoje? 🚀</div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-white border-t flex gap-2">
+        <input type="text" id="input-chat" placeholder="Ex: iPhone 15 ou Furadeira..." class="flex-1 border p-4 rounded-full outline-none focus:border-purple-500 shadow-sm">
+        <button onclick="enviarMensagem()" class="bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700">
+            <i data-lucide="send"></i>
+        </button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const API_KEY = "AIzaSyC3T44Q4c6QiFHi83JzeI_bGzo5hcN84Ak";
+
+        async function enviarMensagem() {
+            const input = document.getElementById('input-chat');
+            const chat = document.getElementById('chat');
+            const userMsg = input.value;
+            if(!userMsg) return;
+
+            chat.innerHTML += `<div class="bubble-user">${userMsg}</div>`;
+            input.value = '';
+            
+            const loadingId = "load-" + Date.now();
+            chat.innerHTML += `<div class="bubble-ia" id="${loadingId}">Martii pesquisando nas Big Techs... ⌛</div>`;
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Aja como o assistente de compras Martii IA. O usuário quer: ${userMsg}. Diga que encontrou o produ
