@@ -62,7 +62,7 @@ Vou te explicar o porquê: o código antigo tentava falar com o Google direto pe
             input.value = "";
 
             try {
-                // AGORA O FETCH APONTA PARA O SEU PYTHON NA VERCEL
+                // Martii IA - portotv sistema 2026
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
