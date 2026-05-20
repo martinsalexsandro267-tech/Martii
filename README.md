@@ -2,7 +2,7 @@ Essa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **B
 
 **Sim, você deve apagar tudo o que está no seu `index.html` atual e colar o novo código.**
 
-Vou te explicar o porquê: o código antigo tentava falar com o Google direto pelo navegador. O novo código que eu fiz para você é mais inteligente: ele fala primeiro com o seu **Python na Vercel**, que é onde está a segurança e a regra dos **25% de lucro**.
+Vou te explicar o porquê: o código antigo tentava falar com o Google direto pelo navegador. O novo código que eu fiz para você é mais inteligente: ele fala primeiro com o seu **Python na Vercel**, que é onde está a segurança e a regra dos ** 5% de lucro**.
 
 -----
 
