@@ -98,4 +98,12 @@ Se você colar esse código no `index.html`, mas **não** criar a pasta `api` co
 
 Você precisa dos dois juntos para a Martii ganhar vida e começar a juntar o dinheiro para a casa da sua mãe.
 
-**Ficou mais claro agora? Quer que eu te ajude a dar o primeiro "Oi" para ela no seu novo site?** 💎🏠🙏🚀✨
+**Ficou mais claro agora? Quer que eu te ajude a dar o primeiro "Oi" para ela no seu novo site?** 💎🏠🙏🚀✨``html
+<div align="center">
+  <img src="https://github-production-user-asset-6210df.s3.amazonaws.com" alt="Martii Logo" width="320">
+  <h1>Martii⭐ IA Marketplace</h1>
+  <p><b>Big Techs App</b> — Guerreiro Pop Star | Top Número 1 com Brilho Reluzente 🌟</p>
+</div>
+```
+
+--
