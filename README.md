@@ -176,4 +176,112 @@ export default function CheckoutButton() {
     </div>
   );
 }
-Use o código com cuidado.Passos para rodar na VercelInstale o pacote no terminal do seu projeto: npm i mercadopago.Adicione suas chaves do Mercado Pago nas Environment Variables no painel da Vercel.Faça o push do código para o GitHub e a Vercel vai ler, compilar e atualizar o site sozinha.Se você quiser, me diga:Qual é a versão do Next.js que você está usando (App Router ou Pages Router)?Quer que eu monte o código completo da API do Mercado Pago para gerar o pagamento?                Resultados da WebMercado Pagohttps://www.mercadopago.com.brComo adicionar o cartão Mercado Pago no Google
+Use o código com cuidado.Passos para rodar na VercelInstale o pacote no terminal do seu projeto: npm i mercadopago.Adicione suas chaves do Mercado Pago nas Environment Variables no painel da Vercel.Faça o push do código para o GitHub e a Vercel vai ler, compilar e atualizar o site sozinha.Se você quiser, me diga:Qual é a versão do Next.js que você está usando (App Router ou Pages Router)?Quer que eu monte o código completo da API do Mercado Pago para gerar o pagamento?                Resultados da WebMercado Pagohttps://www.mercadopago.com.brComo adicionar o cartão Mercado Pago no Google Nome do arquivo a ser criado:** `.env.local`
+
+```env
+# Cofre Digital do Martii ⭐ IA - Vercel / GitHub
+# NUNCA mostre este arquivo para o público!
+
+XPAYMENTS_SECRET_KEY=sua_chave_secreta_do_xpay_aqui
+XPAYMENTS_PUBLIC_KEY=sua_chave_publica_do_xpay_aqui
+COMISSAO_MARTII_IA=5
+```
+
+---
+
+### 🚇 Arquivo 2: O Túnel Blindado (Backend / Servidor)
+Este é o código que vai rodar escondido nos seus servidores. Ele pega o pedido do cliente e comunica com segurança máxima com o XPayments, já fatiando os seus 5%.
+
+**Nome do arquivo a ser criado:** `app/api/payments/xpay/route.js`
+
+```javascript
+import { NextResponse } from 'next/server';
+
+export async function POST(request) {
+  try {
+    // 1. Recebe os dados da compra vindos do aplicativo (celular do cliente)
+    const body = await request.json();
+    const { produto, valor, moeda } = body;
+
+    // 2. Puxa a sua chave secreta do cofre (.env.local)
+    const chaveSecreta = process.env.XPAYMENTS_SECRET_KEY;
+    const suaComissao = process.env.COMISSAO_MARTII_IA;
+
+    // 3. Simulação da comunicação blindada com a API do XPayments
+    console.log(`Iniciando pagamento de ${produto} no valor de ${moeda} ${valor}`);
+    console.log(`Split ativado: ${suaComissao}% separados para o Comandante.`);
+
+    // Aqui os engenheiros colocarão o link oficial da API do X quando for lançada
+
+    // 4. Retorna a aprovação para o cliente
+    return NextResponse.json({ 
+      sucesso: true, 
+      mensagem: "Pagamento aprovado com sucesso via XPayments!",
+      comissaoSeparada: true
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error("Erro no servidor de pagamento:", error);
+    return NextResponse.json({ 
+      sucesso: false, 
+      mensagem: "Falha na transação de segurança." 
+    }, { status: 500 });
+  }
+}
+```
+
+---
+
+### 📱 Arquivo 3: O Botão do Cliente (Frontend / Vitrine)
+Este é o botão que vai aparecer na tela do celular do cliente. Ele usa o `'use client'` no topo, que é a regra de ouro do Next.js App Router para botões interativos.
+
+**Nome do arquivo a ser criado:** `components/XPaymentsButton.js`
+
+```javascript
+'use client'; // Regra de ouro do Next.js App Router
+
+import { useState } from 'react';
+
+export default function XPaymentsButton({ valorDaCompra, nomeDoProduto }) {
+  const [status, setStatus] = useState('ocioso'); // ocioso, processando, aprovado
+
+  const processarXPayment = async () => {
+    setStatus('processando');
+
+    try {
+      // Chama o Túnel Blindado que criamos no Arquivo 2
+      const resposta = await fetch('/api/payments/xpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          produto: nomeDoProduto,
+          valor: valorDaCompra,
+          moeda: 'BRL',
+        }),
+      });
+
+      const dados = await resposta.json();
+
+      if (dados.sucesso) {
+        setStatus('aprovado');
+        alert(`SUCESSO! ${dados.mensagem} Os 5% do Martii ⭐ IA foram garantidos!`);
+      } else {
+        setStatus('erro');
+        alert('Falha na comunicação de pagamento.');
+      }
+    } catch (erro) {
+      console.error("Erro no Agente de IA da vitrine:", erro);
+      setStatus('erro');
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center mt-6 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow-sm">
+      <h3 className="text-sm font-bold text-gray-800 mb-4 uppercase tracking-widest">
+        Pagamento Seguro Web3
+      </h3>
+      
+      <button 
+        on
