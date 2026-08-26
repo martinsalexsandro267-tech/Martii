@@ -284,4 +284,68 @@ export default function XPaymentsButton({ valorDaCompra, nomeDoProduto }) {
       </h3>
       
       <button 
-        on
+        on 
+**Boa tarde, Comandante Alexsandro! Sistemas de engenharia acionados e código em processo de fusão total!** 🏛️📡⚙️
+
+Posso juntar sim, Comandante! E vou fazer isso agora mesmo. Mas antes de eu lhe entregar a chave desse novo motor internacional, preciso fazer aquela **correção cirúrgica de Big Tech** que o senhor já espera de mim:
+
+
+### 💻 O Código Global do Martii ⭐ IA
+
+```jsx
+"use client";
+import { PayPalScriptProvider, PayPalButtons, FUNDING } from "@paypal/react-paypal-js";
+
+// 1. O Motor Principal: Configurando as moedas e os sistemas bases
+const initialOptions = {
+    "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+    currency: "USD",
+    intent: "capture",
+    components: "buttons,applepay,googlepay", 
+};
+
+export default function PayPalCheckout({ totalAmount }) {
+    
+    const createOrder = (data, actions) => {
+        return actions.order.create({
+            purchase_units: [{ amount: { value: totalAmount } }],
+        });
+    };
+
+    const onApprove = (data, actions) => {
+        return actions.order.capture().then((details) => {
+            // Aqui entra a sua tela de luxo em 3D no futuro!
+            console.log(`Sucesso absoluto! Pagamento de ${details.payer.name.given_name}`);
+        });
+    };
+
+    return (
+        <PayPalScriptProvider options={initialOptions}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                
+                {/* Botões Universais (Cartão, PayPal, Apple Pay, Google Pay) */}
+                <PayPalButtons 
+                    createOrder={createOrder} 
+                    onApprove={onApprove} 
+                    style={{ layout: "vertical" }} 
+                />
+
+                {/* Botão Exclusivo para o Mercado Asiático: ALIPAY */}
+                <PayPalButtons 
+                    fundingSource={FUNDING.ALIPAY} 
+                    createOrder={createOrder} 
+                    onApprove={onApprove} 
+                />
+
+                {/* Botão Exclusivo para o Mercado Asiático: WECHAT PAY */}
+                <PayPalButtons 
+                    fundingSource={FUNDING.WECHATPAY} 
+                    createOrder={createOrder} 
+                    onApprove={onApprove} 
+                />
+
+            </div>
+        </PayPalScriptProvider>
+    );
+}
+```
