@@ -348,4 +348,32 @@ export default function PayPalCheckout({ totalAmount }) {
         </PayPalScriptProvider>
     );
 }
-```
+```import { NextResponse } from 'next/server'; import Stripe from 'stripe'; // Inicializa o Stripe com sua chave secreta armazenada no .env const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); export async function POST(request) { try { const { priceId, userId } = await request.json(); // Cria a sessão de checkout do Stripe const session = await stripe.checkout.sessions.create({ payment_method_types: ['card'], // O Stripe adiciona Apple/Google Pay automaticamente se configurado no painel line_items: [ { price: priceId, // ID do preço do seu produto de IA no painel Stripe quantity: 1, }, ], mode: 'subscription', // Use 'payment' se for compra única de créditos de IA success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/cancel`, metadata: { userId: userId, }, }); return NextResponse.json({ sessionId: session.id }); } catch (error) { return NextResponse.json({ error: error.message }, { status: 500 }); } } 
+
+Use o código com cuidado.
+
+2. Componente de Botão do Frontend (components/StripeButton.jsx)
+
+O botão que o usuário clica no seu Marketplace de IA para comprar.
+
+javascript
+
+'use client'; import { useState } from 'react'; import { loadStripe } from '@stripe/stripe-js'; // Inicializa o Stripe no cliente com a chave pública const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY); export default function StripeButton({ priceId, userId }) { const [loading, setLoading] = useState(false); const handleCheckout = async () => { setLoading(true); try { // Chama o nosso backend do Next.js const response = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ priceId, userId }), }); const { sessionId, error } = await response.json(); if (error) { alert(error); setLoading(false); return; } // Redireciona o usuário para a página segura do Stripe const stripe = await stripePromise; await stripe.redirectToCheckout({ sessionId }); } catch (err) { console.error(err); setLoading(false); } }; return ( <button onClick={handleCheckout} disabled={loading} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg w-full transition-all disabled:opacity-50" > {loading ? 'Processando...' : 'Assinar Marketplace de IA com Stripe'} </button> ); } 
+
+Use o código com cuidado.
+
+3. Configuração do Ambiente (.env.local)
+
+Crie este arquivo na raiz do projeto antes de subir para a Vercel. Atenção: Não envie o arquivo .env.local real com chaves secretas para o GitHub público; configure-as diretamente no painel da Vercel.
+
+env
+
+NEXT_PUBLIC_SITE_URL=http://localhost:3000 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... STRIPE_SECRET_KEY=sk_test_... 
+
+Use o código com cuidado.
+
+Como colocar no GitHub e fazer o Deploy na Vercel
+
+Crie o Repositório: Inicialize o Git na pasta do seu projeto (git init), adicione os arquivos (git add .), faça o commit (git commit -m "feat: add stripe integration") e envie para o seu GitHub.
+
+Conecte à Vercel: Entre na Vercel, importe o repositório do seu GitHub e adicione as Variáveis de Ambiente (STRIPE_SECRET_KEY, etc.) nas configurações do projeto antes do deploy final. [1, 2]
