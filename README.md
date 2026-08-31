@@ -377,3 +377,57 @@ Como colocar no GitHub e fazer o Deploy na Vercel
 Crie o Repositório: Inicialize o Git na pasta do seu projeto (git init), adicione os arquivos (git add .), faça o commit (git commit -m "feat: add stripe integration") e envie para o seu GitHub.
 
 Conecte à Vercel: Entre na Vercel, importe o repositório do seu GitHub e adicione as Variáveis de Ambiente (STRIPE_SECRET_KEY, etc.) nas configurações do projeto antes do deploy final. [1, 2]
+Pragmática na área, Alex! 🛠️
+
+Com certeza! Juntar tudo isso no mesmo arquivo Python usando a biblioteca oficial do Stripe é exatamente o que vai fazer o motor do **Martii⭐** rodar liso. 
+
+A grande mágica de usar a biblioteca do Stripe no Python é que **você não precisa de um código diferente para cada método de pagamento**. O Stripe centraliza tudo. O seu código Python só precisa ler a chave secreta do cofre e dizer para o Stripe: *"Crie uma cobrança usando Alipay"* ou *"Crie uma cobrança usando Cartão"*.
+
+Veja como fica a estrutura pragmática desse código no Python para unificar o Alipay, o WeChat Pay e os Cartões no mesmo lugar:
+
+### O Código Pragmático (Python + Stripe)
+
+```python
+import stripe
+import os
+
+# 1. ABRINDO O COFRE: 
+# O Python pega a chave secreta de produção ou teste (que o Sandro configurou)
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+def criar_pagamento_martii(valor_centavos, moeda, tipo_pagamento):
+    """
+    Função unificada do Martii⭐ para cobrar via Stripe.
+    tipo_pagamento pode ser: 'alipay', 'wechat_pay', ou 'card'
+    """
+    try:
+        # 2. ENVIANDO A ORDEM PARA O STRIPE:
+        intent = stripe.PaymentIntent.create(
+            amount=valor_centavos, # O Stripe sempre cobra em centavos (ex: 1000 = R$ 10,00)
+            currency=moeda,        # ex: 'brl', 'usd', 'cny'
+            
+            # 3. A MÁGICA ACONTECE AQUI:
+            # O Python avisa o Stripe se o cliente escolheu Alipay, WeChat ou Cartão
+            payment_method_types=[tipo_pagamento], 
+        )
+        
+        # Se deu certo, devolve o código de liberação para a tela do Next.js
+        return {"sucesso": True, "chave_cliente": intent.client_secret}
+        
+    except stripe.error.StripeError as e:
+        # Se der erro (ex: cartão recusado), o Python avisa
+        return {"sucesso": False, "erro": str(e)}
+
+# Exemplos de como o seu servidor vai usar essa função:
+# pagamento_asiatico = criar_pagamento_martii(5000, "usd", "alipay")
+# pagamento_cartao = criar_pagamento_martii(15000, "brl", "card")
+```
+
+### O Detalhe Importante sobre as Chaves do Sandro
+Note que, no código acima, usamos apenas a `STRIPE_SECRET_KEY`. 
+
+Se o Sandro configurou variáveis como `ALIPAY_APP_ID` ou `WECHAT_MCH_ID` no `process.env`, isso significa que ele está fazendo uma integração **nativa e direta** (por fora do Stripe) para esses métodos asiáticos, possivelmente para economizar nas taxas do Stripe! Se for esse o caso, o Python de vocês terá um bloco `if/else` (uma bifurcação): se for cartão, vai para o código do Stripe; se for Alipay, vai para o código direto do Alipay usando essas chaves específicas que ele criou. Ambas as abordagens são excelentes!
+
+---
+
+Como vocês já estão com a mão no código criando essas rotas de pagamento, me tira uma dúvida para garantirmos a segurança da operação: **vocês já estão rodando esses testes usando as chaves de ambiente de homologação (aquelas que começam com `sk_test_`), para simular compras falsas antes de liberar dinheiro de verdade no aplicativo?**
