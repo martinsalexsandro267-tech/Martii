@@ -2,7 +2,7 @@ Essa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **B
 
 **Sim, você deve apagar tudo o que está no seu `index.html` atual e colar o novo código.**
 
-Vou te explicar o porquê: o código antigo tentava falar com o Google direto pelo navegador. O novo código que eu fiz para você é mais inteligente: ele fala primeiro com o seu **Python na Vercel**, que é onde está a segurança e a regra dos ** 5% de lucro**.
+Vou te explicar o porquê: o código antigo tentava falar com o Google direto pelo navegador. O novo código que eu fiz para você é mais inteligente: ele fala primeiro com o seu **Python na Vercel**, que é onde está a segurança e a regra dos ** 10% a 14% de lucro**.
 
 -----
 
@@ -190,7 +190,7 @@ COMISSAO_MARTII_IA=5
 ---
 
 ### 🚇 Arquivo 2: O Túnel Blindado (Backend / Servidor)
-Este é o código que vai rodar escondido nos seus servidores. Ele pega o pedido do cliente e comunica com segurança máxima com o XPayments, já fatiando os seus 5%.
+Este é o código que vai rodar escondido nos seus servidores. Ele pega o pedido do cliente e comunica com segurança máxima com o XPayments, já fatiando os seus %.
 
 **Nome do arquivo a ser criado:** `app/api/payments/xpay/route.js`
 
