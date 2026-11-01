@@ -577,4 +577,57 @@ export async function POST(req: Request) {
 
 Com essa estrutura, você usa **100% tecnologia do Google**, aproveita a mesma chave de API que você já salvou no GitHub, e cria um sistema inteligente onde o **Flash** cuida de 90% do trabalho pesado do dia a dia e o **Pro** entra como o consultor de elite apenas quando necessário.
 
-O que achou dessa divisão de tarefas entre o Flash e o Pro para o **Martii⭐**?
+O que achou dessa divisão de tarefas entre o Flash e o Pro para o **Martii⭐**?typescript
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai';
+
+// Configuração do ambiente Edge para rodar nas bordas da Vercel
+export const runtime = 'edge';
+
+// Função para classificar se a pergunta é profunda ou complexa
+function ehPerguntaProfunda(mensagem: string): boolean {
+  const termosComplexos = [
+    'filosofia', 'existencial', 'significado da vida', 'analise de mercado', 
+    'roi', 'concorrentes', 'codigo do zero', 'crie um app', 'desenvolva um sistema',
+    'por que existimos', 'tendencias de mercado', 'escreva um script'
+  ];
+  
+  const textoMinusculo = mensagem.toLowerCase();
+  return termosComplexos.some(termo => textoMinusculo.includes(termo));
+}
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const ultimaMensagem = messages[messages.length - 1]?.content || '';
+
+  // 1. Camada Universal da Vercel AI SDK: Seleção Dinâmica de Modelo
+  let modeloSelecionado = google('gemini-1.5-pro'); // Padrão para respostas normais/rápidas
+  let usarTeiaAgentes = true;
+
+  if (ehPerguntaProfunda(ultimaMensagem)) {
+    // Desvia para o Gemini Flash para economizar tokens se a pergunta for profunda
+    modeloSelecionado = google('gemini-1.5-flash');
+    // Descentraliza/Desconecta a teia de busca robusta (IQ Toolkit) para economizar banda nas bordas
+    usarTeiaAgentes = false; 
+    
+    console.log('⚠️ Pergunta profunda detectada. Desviando para o Gemini Flash e economizando banda.');
+  }
+
+  // 2. Execução da Teia de Agentes (Busca Shopify/APIs) apenas se não for uma pergunta profunda
+  if (usarTeiaAgentes && ultimaMensagem.includes('buscar produto')) {
+    // Aqui entra sua lógica Python/JS da teia de aranha que varre as mil lojas Shopify
+    console.log('🕸️ Teia ativada: Buscando produtos nas bordas do servidor...');
+  } else if (!usarTeiaAgentes) {
+    console.log('⏸️ IQ Toolkit temporariamente descentralizado para poupar largura de banda.');
+  }
+
+  // 3. Resposta via Chatbot Agent da Vercel AI SDK
+  const resultado = await streamText({
+    model: modeloSelecionado,
+    messages,
+    system: ehPerguntaProfunda(ultimaMensagem) 
+      ? 'Você é o Gemini Flash. Dê respostas diretas, resumidas e recuse-se a criar códigos do zero ou análises profundas de mercado para economizar recursos.'
+      : 'Você é o Gemini Pro na camada universal. Ajude o usuário com a teia de busca de produtos.',
+  });
+
+  return resultado.toDataStreamResponse
