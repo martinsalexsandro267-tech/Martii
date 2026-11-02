@@ -607,7 +607,7 @@ export async function POST(req: Request) {
   if (ehPerguntaProfunda(ultimaMensagem)) {
     // Desvia para o Gemini Flash para economizar tokens se a pergunta for profunda
     modeloSelecionado = google('gemini-1.5-flash');
-    // Descentraliza/Desconecta a teia de busca robusta (IQ Toolkit) para economizar banda nas bordas
+    // Descentraliza/Desconecta a teia de busca robusta (IA Toolkit) para economizar banda nas bordas
     usarTeiaAgentes = false; 
     
     console.log('⚠️ Pergunta profunda detectada. Desviando para o Gemini Flash e economizando banda.');
@@ -618,7 +618,7 @@ export async function POST(req: Request) {
     // Aqui entra sua lógica Python/JS da teia de aranha que varre as mil lojas Shopify
     console.log('🕸️ Teia ativada: Buscando produtos nas bordas do servidor...');
   } else if (!usarTeiaAgentes) {
-    console.log('⏸️ IQ Toolkit temporariamente descentralizado para poupar largura de banda.');
+    console.log('⏸️ IA Toolkit temporariamente descentralizado para poupar largura de banda.');
   }
 
   // 3. Resposta via Chatbot Agent da Vercel AI SDK
