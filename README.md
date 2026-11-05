@@ -630,4 +630,19 @@ export async function POST(req: Request) {
       : 'Você é o Gemini Pro na camada universal. Ajude o usuário com a teia de busca de produtos.',
   });
 
-  return resultado.toDataStreamResponse
+  return resultado.toDataStreamResponse ```typescript
+  // 🛡️ Módulo de Expansão de Poder Bruto (Multi-Servidor / Balanceador)
+  const ativarPoderBruto = false; 
+  if (ativarPoderBruto) {
+    try {
+      const respostaExterna = await fetch('https://seu-segundo-servidor.com/api/balanceador', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, ultimaMensagem })
+      });
+      if (respostaExterna.ok) return respostaExterna;
+    } catch (erro) {
+      console.log('⚠️ Expansão de poder em espera. Mantendo fluxo principal.');
+    }
+  }
+```
