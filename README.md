@@ -645,4 +645,6 @@ export async function POST(req: Request) {
       console.log('⚠️ Expansão de poder em espera. Mantendo fluxo principal.');
     }
   }
-```
+``` [11/11 22:53] Sandro: • app/api intacta e pedir para uma IA (ou editar via CSS/Tailwind) apenas os componentes visuais na pasta components/ e app/page.tsx.
+[11/11 22:57] Sandro: Procure por gemini-1.5-pro e troque por gemini-3.8-flash ou gemini-3.1-pro.
+[11/11 22:58] Sandro: package.json, garanta que as bibliotecas ai e @ai-sdk/google estejam atualizadas para
