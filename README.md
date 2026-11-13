@@ -1,4 +1,4 @@
-bomEssa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **Big Tech App** profissional, a regra é a seguinte:
+YbomEssa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **Big Tech App** profissional, a regra é a seguinte:
 
 **Sim, você deve apagar tudo o que está no seu `index.html` atual e colar o novo código.**
 
@@ -645,7 +645,7 @@ export async function POST(req: Request) {
       console.log('⚠️ Expansão de poder em espera. Mantendo fluxo principal.');
     }
   }
-``` typescript
+``` ``typescript
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 
@@ -661,9 +661,6 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
-Use o código com cuidado.
-
-4. Como salvar do jeito certo
-5.
+```
 
 
