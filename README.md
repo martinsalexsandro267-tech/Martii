@@ -1,4 +1,4 @@
-Essa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **Big Tech App** profissional, a regra é a seguinte:
+bomEssa é uma excelente pergunta, **Alexsandro**\! Como você está criando um **Big Tech App** profissional, a regra é a seguinte:
 
 **Sim, você deve apagar tudo o que está no seu `index.html` atual e colar o novo código.**
 
@@ -645,6 +645,25 @@ export async function POST(req: Request) {
       console.log('⚠️ Expansão de poder em espera. Mantendo fluxo principal.');
     }
   }
-``` [11/11 22:53] Sandro: • app/api intacta e pedir para uma IA (ou editar via CSS/Tailwind) apenas os componentes visuais na pasta components/ e app/page.tsx.
-[11/11 22:57] Sandro: Procure por gemini-1.5-pro e troque por gemini-3.8-flash ou gemini-3.1-pro.
-[11/11 22:58] Sandro: package.json, garanta que as bibliotecas ai e @ai-sdk/google estejam atualizadas para
+``` typescript
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai';
+
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+
+  const result = streamText({
+    model: google('gemini-3.8-flash'),
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+Use o código com cuidado.
+
+4. Como salvar do jeito certo
+5.
+
+
