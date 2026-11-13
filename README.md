@@ -444,7 +444,7 @@ Veja como fica a divisão exata dos papéis no seu código:
 * **O que ele faz:** É o cérebro de entrada. Ele faz a triagem das conversas, atende o chat leve da Menina Gamer e comanda a varredura rápida da sua **Teia de Aranha 🕸️** nas 1000 lojas. 
 * **Por que ele:** Porque ele é extremamente rápido e consome pouquíssimos recursos para tarefas do dia a dia.
 
-### 2. O Gemini 1.5 Pro (O Diretor de Estratégia) 🧠🎓
+### 2. O google('gemini-3.8-flash') (O Diretor de Estratégia) 🧠🎓
 * **O que ele faz:** É o cérebro pesado. Ele só é acionado quando o lojista ou o cliente exige **alta complexidade** — por exemplo: analisar relatórios profundos de vendas do marketplace, criar códigos complexos de programação do zero, ou montar estratégias avançadas de marketing.
 * **Por que ele:** Porque ele tem um raciocínio lógico muito mais profundo, mas gasta mais tokens. Por isso ele fica guardado no banco de reservas, pronto para entrar só quando o jogo for difícil.
 
