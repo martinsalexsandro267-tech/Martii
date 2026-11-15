@@ -661,6 +661,68 @@ export async function POST(req: Request) {
 
   return result.toDataStreamResponse();
 }
-```
+``` javascript
+import { google } from '@ai-sdk/google';
+import { generateText, generateObject, tool } from 'ai';
+import { z } from 'zod';
+
+// Configuração dos 3 Cérebros usando Gemini 3.8 Flash
+const cerebro1_Orquestrador = google('gemini-3.8-flash'); // Foco: velocidade
+const cerebro2_Extrator = google('gemini-3.8-flash');     // Foco: scraping e tools
+const cerebro3_AgentePro = google('gemini-3.8-flash');    // Foco: raciocínio profundo
+
+// Ferramenta de scraping para lojas Shopify
+const shopifyScraperTool = tool({
+  description: 'Extrai produtos e metadados de uma loja Shopify via endpoint público',
+  parameters: z.object({
+    storeUrl: z.string().url(),
+  }),
+  execute: async ({ storeUrl }) => {
+    const res = await fetch(`${storeUrl.replace(/\/$/, '')}/products.json?limit=50`);
+    if (!res.ok) return { error: `Falha ao acessar ${storeUrl}`, status: res.status };
+    const data = await res.json();
+    return { storeUrl, total: data.products?.length || 0, products: data.products };
+  },
+});
+
+export async function executarTeiaShopify(listaLojas) {
+  // 1. CÉREBRO 1: Filtra e organiza o lote de 50 a 100 lojas
+  const { object: loteOrganizado } = await generateObject({
+    model: cerebro1_Orquestrador,
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: 'low' } } },
+    schema: z.object({
+      urlsValidas: z.array(z.string()),
+    }),
+    prompt: `Valide e normalize estas URLs de lojas Shopify para raspagem em paralelo: ${JSON.stringify(listaLojas)}`,
+  });
+
+  // 2. CÉREBRO 2: Executa a raspagem em paralelo nas bordas (Edge)
+  const resultadosBrutos = await Promise.allSettled(
+    loteOrganizado.urlsValidas.map((url) =>
+      generateText({
+        model: cerebro2_Extrator,
+        providerOptions: { google: { thinkingConfig: { thinkingLevel: 'medium' } } },
+        tools: { extrairShopify: shopifyScraperTool },
+        maxSteps: 3,
+        prompt: `Extraia o catálogo da loja: ${url}`,
+      })
+    )
+  );
+
+  // 3. CÉREBRO 3: Agente autônomo que audita, limpa e consolida tudo
+  const { text: relatorioFinal } = await generateText({
+    model: cerebro3_AgentePro,
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: 'high' } } },
+    system: 'Você é o agente auditor chefe. Analise os retornos das lojas, identifique bloqueios ou falhas e consolide os dados válidos em JSON limpo.',
+    prompt: `Consolide os resultados da raspagem de ${loteOrganizado.urlsValidas.length} lojas: ${JSON.stringify(resultadosBrutos)}`,
+  });
+
+  return relatorioFinal;
+}
+Use o código com cuidado.
+
+Compatibilidade com seu repositório e Edge
+
+• Recursos preservados. Todas as funções do Vercel AI SDK (generateText, generateObject, streamText e tool) continuam funcionando normalmente com o pacote @ai-sdk/google.
 
 
