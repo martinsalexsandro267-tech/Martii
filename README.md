@@ -723,6 +723,43 @@ Use o código com cuidado.
 
 Compatibilidade com seu repositório e Edge
 
-• Recursos preservados. Todas as funções do Vercel AI SDK (generateText, generateObject, streamText e tool) continuam funcionando normalmente com o pacote @ai-sdk/google.
+• Recursos preservados. Todas as funções do Vercel AI SDK (generateText, generateObject, streamText e tool) continuam funcionando normalmente com o pacote @ai-sdk/google. ``javascript
+import { google } from '@ai-sdk/google';
+import { generateText, tool } from 'ai';
+import { z } from 'zod';
+
+const cerebroInteligente = google('gemini-3.8-flash');
+
+// Ferramenta Shopify com limite dinâmico ajustado pelo agente
+const shopifyScraperDinamico = tool({
+  description: 'Extrai produtos ajustando o limite dinamicamente para economizar banda larga nas bordas',
+  parameters: z.object({
+    storeUrl: z.string().url(),
+    limiteDinamico: z.number().min(5).max(50), // Decisão autônoma: 10, 20, 40 ou 50
+    termoBusca: z.string(),
+  }),
+  execute: async ({ storeUrl, limiteDinamico }) => {
+    const res = await fetch(`${storeUrl.replace(/\/$/, '')}/products.json?limit=${limiteDinamico}`);
+    if (!res.ok) return { error: `Falha na loja`, status: res.status };
+    const data = await res.json();
+    return { storeUrl, itensCarregados: data.products?.length || 0, produtos: data.products };
+  },
+});
+
+export async function teiaAutonomaEdge(urlLoja, queryUsuario) {
+  // A teia decide sozinha o volume ideal para proteger a banda larga
+  const { text: relatorioAdaptativo } = await generateText({
+    model: cerebroInteligente,
+    tools: { extrairDinamico: shopifyScraperDinamico },
+    maxSteps: 2,
+    system: `Você é um agente autônomo nas bordas (Edge). Analise o pedido do usuário ("${queryUsuario}"). 
+    Se o pedido for genérico ou puder sobrecarregar a rede, DECIDA por baixar o limite de produtos (use 10, 20 ou 40 em vez de 50). 
+    Poupe banda larga e traga apenas o essencial de forma inteligente.`,
+    prompt: `Avalie e execute a extração para a loja ${urlLoja} com base no termo: "${queryUsuario}"`,
+  });
+
+  return relatorioAdaptativo;
+}
+```
 
 
