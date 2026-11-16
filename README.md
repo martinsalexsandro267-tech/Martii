@@ -758,7 +758,70 @@ export async function teiaAutonomaEdge(urlLoja, queryUsuario) {
     prompt: `Avalie e execute a extração para a loja ${urlLoja} com base no termo: "${queryUsuario}"`,
   });
 
-  return relatorioAdaptativo;
+  return relatorioAdaptativo; markdown
+## 🕸️ Teia de Aranha Autônoma (Edge Self-Throttling)
+
+Este módulo utiliza o **Gemini 3.8 Flash** e o **Vercel AI SDK** para rodar microserviços inteligentes nas bordas (*Edge*). O sistema analisa o tráfego em tempo real e ajusta dinamicamente os limites de requisições (*rate limiting*) antes que sobrecargas atinjam a infraestrutura principal.
+
+### ⚙️ Arquitetura e Funcionamento
+
+* **Inferência de Baixa Latência:** Executa o modelo `gemini-3.8-flash` diretamente no *Edge Runtime* para classificar padrões de acesso sem adicionar atrasos perceptíveis à resposta.
+* **Ajuste Dinâmico de Cotas:** Modifica limites de requisições por IP, token ou rota com base na anomalia detectada, substituindo regras estáticas de bloqueio.
+* **Níveis de Raciocínio Adaptativos:** Alterna o parâmetro `thinking_level` entre `LOW` (tráfego normal) e `HIGH` (picos suspeitos) para equilibrar custo de tokens e precisão na análise.
+* **Respostas em Streaming:** Utiliza o [Vercel AI SDK](https://vercel.ai "Vercel AI SDK documentation") para transmitir decisões de roteamento e alertas de telemetria de forma assíncrona.
+
+### 🚀 Exemplo de Implementação (`middleware.ts`)
+
+```typescript
+import { google } from '@ai-sdk/google';
+import { generateObject } from 'ai';
+import { NextResponse, type NextRequest } from 'next/server';
+import { z } from 'zod';
+
+export const config = {
+  matcher: '/api/:path*',
+};
+
+export async function middleware(req: NextRequest) {
+  const ip = req.ip ?? '127.0.0.1';
+  const userAgent = req.headers.get('user-agent') ?? 'unknown';
+
+  const { object: decision } = await generateObject({
+    model: google('gemini-3.8-flash'),
+    providerOptions: {
+      google: {
+        thinkingLevel: 'LOW',
+      },
+    },
+    schema: z.object({
+      action: z.enum(['ALLOW', 'THROTTLE', 'BLOCK']),
+      retryAfterSeconds: z.number().optional(),
+      reason: z.string(),
+    }),
+    prompt: `Avalie o risco desta requisição Edge. IP: ${ip}, Rota: ${req.nextUrl.pathname}, UA: ${userAgent}`,
+  });
+
+  if (decision.action === 'THROTTLE' || decision.action === 'BLOCK') {
+    return new NextResponse(
+      JSON.stringify({ error: 'Rate limit dinâmico atingido', reason: decision.reason }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': String(decision.retryAfterSeconds ?? 30),
+        },
+      }
+    );
+  }
+
+  return NextResponse.next();
+}
+```
+
+### 📋 Requisitos de Configuração
+
+* **Variáveis de Ambiente:** Defina `GOOGLE_GENERATIVE_AI_API_KEY` nas configurações do projeto na [Vercel](https://vercel.com "Vercel environment variables docs").
+* **Compatibilidade de Parâmetros:**
 }
 ```
 
