@@ -823,6 +823,31 @@ export async function middleware(req: NextRequest) {
 * **Variáveis de Ambiente:** Defina `GOOGLE_GENERATIVE_AI_API_KEY` nas configurações do projeto na [Vercel](https://vercel.com "Vercel environment variables docs").
 * **Compatibilidade de Parâmetros:**
 }
+``` ``markdown
+# 🕸️ Documento de Auditoria e Decisão Autônoma da Teia (Edge Auto-Throttling & Shopify Scraper)
+
+Este documento detalha o funcionamento do mecanismo de inteligência adaptativa da **Teia de Aranha** integrada ao ecossistema do **Martii ⭐ IA Smart Shopping** via Vercel AI SDK e o modelo **Gemini 3.8 Flash**.
+
+---
+
+### 🧠 Como Funciona a Decisão Autônoma de Carga
+
+Em sistemas tradicionais, a busca de produtos em plataformas de e-commerce como a Shopify utiliza limites estáticos rígidos (por exemplo, sempre forçar o carregamento de blocos fixos de `50` itens). Em momentos de pico de tráfego, essa prática sobrecarrega as bordas (*Edge Runtime*), consome banda larga desnecessariamente e gera lentidão na interface do usuário.
+
+A **Teia de Aranha** resolve esse problema assumindo o controle total do fluxo de entrada e saída de dados (*Input/Output Traffic*):
+
+1. **Análise de Demanda em Tempo Real:** Quando o usuário realiza uma busca por um termo específico (ex: *"tênis"*), o agente autônomo analisa o contexto da requisição na borda.
+2. **Escala Dinâmica de Lojas e Produtos (1 a 50):** A teia avalia o peso dos dados e decide autonomamente o limite exato de itens que devem ser buscados nas APIs públicas das lojas Shopify. 
+   * Em vez de puxar cegamente o bloco máximo de **50**, se o cenário exigir economia de banda ou se a busca for altamente específica, ela ajusta dinamicamente a requisição para puxar quantidades menores, passando por toda a faixa de **1, 2, 3, 4, 5... até 49 ou 50** conforme a necessidade exata.
+3. **Proteção contra Gargalos nas Bordas:** Com essa seleção inteligente de volume, nenhum byte de rede é desperdiçado, garantindo que o sistema suporte picos de acesso extremos sem estourar as cotas de banda larga ou travar a infraestrutura na Vercel.
+
+---
+
+### 🛡️ Segurança de Rota (Entrada e Saída)
+
+O fluxo de dados da teia é auditado continuamente nas bordas:
+* **Entrada (Request):** Validação e sanitização de URLs de lojas e termos de busca via esquemas estritos do `Zod`.
+* **Saída (Response):** Filtragem inteligente de metadados e produtos, entregando apenas o volume essencial necessário para renderizar a vitrine de forma ultra-rápida.
 ```
 
 
