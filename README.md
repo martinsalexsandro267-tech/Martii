@@ -847,7 +847,10 @@ A **Teia de Aranha** resolve esse problema assumindo o controle total do fluxo d
 
 O fluxo de dados da teia é auditado continuamente nas bordas:
 * **Entrada (Request):** Validação e sanitização de URLs de lojas e termos de busca via esquemas estritos do `Zod`.
-* **Saída (Response):** Filtragem inteligente de metadados e produtos, entregando apenas o volume essencial necessário para renderizar a vitrine de forma ultra-rápida.
+* **Saída (Response):** Filtragem inteligente de metadados e produtos, entregando apenas o volume essencial necessário para renderizar a vitrine de forma ultra-rápida. ``markdown
+# 🕸️ Teia de Aranha (Smart Edge Funnel)
+
+A **Teia de Aranha** é o agente autônomo de inteligência artificial do **Martii ⭐ IA Smart Shopping** responsável por capturar, filtrar e otimizar o fluxo de dados das APIs de lojas Shopify diretamente nas bordas (*Edge Runtime*).
 ```
 
 
