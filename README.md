@@ -855,6 +855,68 @@ A **Teia de Aranha** é o agente autônomo de inteligência artificial do **Mart
 
 A **Teia de Aranha** é o agente autônomo do sistema **Martii**, projetado para processar, filtrar e otimizar o fluxo de dados das APIs de lojas Shopify diretamente nas bordas (*Edge Runtime*).
 `
+``` ``typescript
+import { google } from '@ai-sdk/google';
+import { generateObject, tool } from 'ai';
+import { z } from 'zod';
+
+// Roda na borda (Edge) para não pesar o servidor nem o app
+export const runtime = 'edge';
+
+// Simulação do seu catálogo de APIs e pagamentos
+const APIS_DISPONIVEIS = Array.from({ length: 50 }, (_, i) => `api_marketplace_${i + 1}`);
+const METODOS_PAGAMENTO = [
+  'Pix', 'QR Code', 'Mercado Pago', 'PayPal', 'Google Pay', 
+  'Apple Pay', 'WeChat Pay', 'Alipay', 'Stripe Link', 'XPayments'
+];
+
+export async function POST(req: Request) {
+  const { cargaAtualServidor, nichoAlvo, nivelTrafego } = await req.json();
+
+  // 1. REGRA DE ECONOMIA DE TOKENS E BANDA LARGA
+  let limiteApis = 50;
+  if (cargaAtualServidor > 80 || nivelTrafego === 'PESADO') {
+    limiteApis = 5; 
+  } else if (cargaAtualServidor > 50 || nivelTrafego === 'MEDIO') {
+    limiteApis = 20; 
+  }
+
+  const apisAtivas = APIS_DISPONIVEIS.slice(0, limiteApis);
+
+  // 2. EXECUÇÃO DO 4º CÉREBRO (GALÁXIA) COM O GEMINI FLASH 3.8
+  const { object: resultadoGalaxia } = await generateObject({
+    model: google('gemini-flash-3.8'), 
+    system: `Você é o 4º Cérebro (Galáxia) da arquitetura Martii IA.
+    Sua função é caçar intenção de compra na web sem pesar o sistema.
+    Limite operacional atual: use no máximo ${limiteApis} APIs simultâneas para poupar banda e tokens.
+    Sempre gere uma oferta irresistível (cupom ou preço menor) com checkout rápido (${METODOS_PAGAMENTO.slice(0, 5).join(', ')}).`,
+    prompt: `Analise o fluxo de intenção de compra para o nicho: "${nichoAlvo}". 
+    APIs liberadas pela teia neste ciclo: ${apisAtivas.join(', ')}.
+    Filtre leads quentes, extraia contatos válidos para remarketing e monte a janela de oferta.`,
+    schema: z.object({
+      statusTeia: z.object({
+        apisAcionadas: z.number(),
+        modoEconomiaAtivo: z.boolean(),
+        economiaTokensEstimada: z.string(),
+      }),
+      leadsCapturados: z.array(
+        z.object({
+          origem: z.enum(['Instagram', 'Facebook', 'Busca Web', 'BigTech Marketplace']),
+          intencaoDetectada: z.string(),
+          emailParaRemarketing: z.string().email().optional(),
+          ofertaJanela: z.object({
+            produtoSugerido: z.string(),
+            descontoAplicado: z.string(),
+            cupom: z.string(),
+            pagamentoRecomendado: z.string(),
+          }),
+        })
+      ),
+    }),
+  });
+
+  return Response.json(resultadoGalaxia);
+}
 ```
 
 
